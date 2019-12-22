@@ -21,7 +21,6 @@ app.use(bodyParser.json());
 app.get("/scores/:id", async (req, res) => {
     try {
         const { id } = req.params;
-
         //add data to Redis
         redis_client.zrange(id, 0, -1, function (err, obj) {
             return res.json(obj);
@@ -33,5 +32,25 @@ app.get("/scores/:id", async (req, res) => {
         return res.status(500).json(error);
     }
 });
+
+app.post("/scores/:id", async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        var name = req.body.name;
+        var score = req.body.score;
+
+        //add data to Redis
+        redis_client.zadd(id, score, name, function (err, obj) {
+            return res.json(obj);
+        });
+
+
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json(error);
+    }
+});
+
 
 app.listen(port, () => console.log(`Server running on Port ${port}`));
