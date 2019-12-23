@@ -1,0 +1,24 @@
+redis-docker:
+  image: redis
+  container_name: redis-docker
+  command: redis-server --appendonly yes
+  volumes:
+    - ./data:/data
+  ports:
+    - 6379:6379
+  restart: always
+  hostname: redis-docker
+app:
+  links:
+    - redis-docker
+  build: ./
+  volumes:
+    - ./:/var/www/app
+  ports:
+    - 5000:5000
+  environment:
+    - NODE_ENV=development
+    - PORT=5000
+    - REDIS_HOST=redis-docker
+  command:
+    sh -c 'npm i && node scoreboard.js'

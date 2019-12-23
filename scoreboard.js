@@ -10,9 +10,11 @@ const moment = require('moment');
 moment().format();
 
 //setup port constants
-const port_redis = process.env.PORT || 6379;
+const redis_port = process.env.REDIS_URL || 6379;
+const redis_host = process.env.REDIS_HOST || "127.0.0.1";
 const port = process.env.PORT || 5000;
-const redis_client = redis.createClient(port_redis);
+console.log("Connecting to "+redis_host+":"+redis_port);
+const redis_client = redis.createClient(redis_port, redis_host);
 const app = express();
 
 moment().format();
@@ -57,7 +59,6 @@ app.post("/scores/:id", cors(), async (req, res) => {
         var score = req.body.score;
         var name = req.body.name;
         var key = name +'|'+moment().format("DD/MM/YYYY hh:ss");
-        console.log(req.body);
 
         //add data to Redis
         redis_client.zadd(id, score, key, function (err, obj) {
