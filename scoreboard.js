@@ -37,9 +37,11 @@ app.get("/scores/:id", cors(), async (req, res) => {
                 var keys = rec[0].split('|');
                 var name = keys[0];
                 var score_day = keys[1];
-                return {
+                var result = {
                     "score" : score, "name" : name, "score_day" : score_day
                 }
+                console.log(result);
+                return result;
 
             })
             return res.json(ret);
@@ -59,7 +61,7 @@ app.post("/scores/:id", cors(), async (req, res) => {
         var score = req.body.score;
         var name = req.body.name;
         var key = name +'|'+moment().format("DD/MM/YYYY hh:ss");
-
+        console.log("Zadd: "+score+", "+name);
         //add data to Redis
         redis_client.zadd(id, score, key, function (err, obj) {
             return res.json(obj);
